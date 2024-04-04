@@ -1,30 +1,67 @@
-const cheerio = require("cheerio");
+import * as cheerio from "cheerio";
 
 const url =
-  "https://www.rkimoveis.com.br/imovel/venda/apartamento-a-venda-2-quartos-2-suites-2-vagas-ingleses-florianopolis-sc/7924";
+  "https://www.rkimoveis.com.br/imovel/venda/villagio-di-siena-apartamento-semi-mobiliado-com-02-dormitorios-sendo-01-suite/9323";
 
 // Acessar a página
-fetch(url)
-  .then((response) => response.text()) // Extrair o corpo da resposta como texto
-  .then((body) => {
-    // Extrair o HTML da página
-    const $ = cheerio.load(body);
+async function getPropertiesData() {
+  // Extrair o HTML da página
+  const $ = cheerio.load(
+    await fetch(url)
+      .then((res) => res.text())
+      .catch((err) => console.log(err))
+  );
 
-    // Extrair o código do imóvel
-    const codigoImovel = $("b#cod-principal").text().split(":")[1].trim();
+  // Extrair o código do imóvel
+  const codigoImovel = $("b#cod-principal").text().split(":")[1].trim();
+  const local = $(".sub-titulo").text().trim().split(",")[0].trim();
 
-    // Extrair o valor do imóvel
-    const valorImovel = $("h6.preco-imovel").text();
+  // Extrair o valor do imóvel
+  const valorImovel = $(".preco-imovel-mobile").text().trim();
 
-    // Extrair o nome do condomínio
-    const nomeCondominio = $("h2.titulo-condominio").text();
+  // Extrair o nome do condomínio
+  const nomeCondominio = $(
+    "div.row.margin-top-20 .col-12 .descricao:last"
+  ).text();
 
-    const descImovel = $("p.descricao").text();
+  const descImovel = $("div.row.margin-top-20 .col-12 .descricao:first")
+    .text()
+    .replace(/(\r\n|\n|\r)/gm, " ")
+    .trim();
 
-    // Imprimir os dados
-    console.log(`Código do Imóvel: ${codigoImovel}`);
-    console.log(`Valor do Imóvel: ${valorImovel}`);
-    console.log(`Nome do Condomínio: ${nomeCondominio}`);
-    console.log(`Descrição: ${descImovel}`);
-  })
-  .catch((error) => console.error(error)); // Tratar erros na requisição;
+  const metragem = $(".icon_detalhes p:first").text().trim();
+  const quartos = $(".icon_detalhes p:nth(2)").text().trim().split(" ")[0];
+  const banheiros = $(".icon_detalhes p:nth(3)").text().trim().split(" ")[0];
+  const garagem = $(".icon_detalhes p:nth(4)").text().trim().split(" ")[0];
+
+  // Imprimir os dados
+  /*
+  console.log(`Código do Imóvel: ${codigoImovel}`);
+  console.log(`Local: ${local}`);
+  console.log(`Valor do Imóvel: ${valorImovel}`);
+  console.log(`Nome do Condomínio: ${nomeCondominio}`);
+  console.log(`Descrição: ${descImovel}`);
+  console.log(`Metragem: ${metragem}`);
+  console.log(
+    `quartos: ${quartos}, banheiros: ${banheiros}, garagem: ${garagem}`
+  );
+  */
+
+  // gerar json com os dados
+
+  const data = {
+    propertyID: codigoImovel,
+    local: local,
+    value: valorImovel,
+    propertyName: nomeCondominio,
+    description: descImovel,
+    meters: metragem,
+    rooms: quartos,
+    bathroom: banheiros,
+    garage: garagem,
+  };
+
+  console.table("dados: ", data);
+}
+
+getPropertiesData();
