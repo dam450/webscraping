@@ -35,17 +35,16 @@ async function getPropertiesData() {
   const garagem = $(".icon_detalhes p:nth(4)").text().trim().split(" ")[0];
 
   // Imprimir os dados
-  /*
-  console.log(`Código do Imóvel: ${codigoImovel}`);
-  console.log(`Local: ${local}`);
-  console.log(`Valor do Imóvel: ${valorImovel}`);
-  console.log(`Nome do Condomínio: ${nomeCondominio}`);
-  console.log(`Descrição: ${descImovel}`);
-  console.log(`Metragem: ${metragem}`);
-  console.log(
-    `quartos: ${quartos}, banheiros: ${banheiros}, garagem: ${garagem}`
-  );
-  */
+
+  // console.log(`Código do Imóvel: ${codigoImovel}`);
+  // console.log(`Local: ${local}`);
+  // console.log(`Valor do Imóvel: ${valorImovel}`);
+  // console.log(`Nome do Condomínio: ${nomeCondominio}`);
+  // console.log(`Descrição: ${descImovel}`);
+  // console.log(`Metragem: ${metragem}`);
+  // console.log(
+  //   `quartos: ${quartos}, banheiros: ${banheiros}, garagem: ${garagem}`
+  // );
 
   // gerar json com os dados
 
@@ -61,7 +60,7 @@ async function getPropertiesData() {
     garage: garagem,
   };
 
-  console.table("dados: ", data);
+  console.log("dados: ", data);
 }
 
 getPropertiesData();
