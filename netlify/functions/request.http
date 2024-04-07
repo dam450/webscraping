@@ -1,7 +1,30 @@
-POST http://localhost:8888/api/property HTTP/1.1
+# requests for /api/property?url=
+
+GET http://localhost:8888/api/property?url= HTTP/1.1
+content-type: application/json
+
+###
+
+GET http://localhost:8888/api/property?url=http://www.xx.com.br/dfsdf HTTP/1.1
+content-type: application/json
+
+###
+
+GET http://localhost:8888/api/property?url=http://www.rkimoveis.com.br/dfsdf HTTP/1.1
+content-type: application/json
+
+###
+
+GET http://localhost:8888/api/property?url=https://www.rkimoveis.com.br/imovel/venda/villagio-di-siena-apartamento-semi-mobiliado-com-02-dormitorios-sendo-01-suite/9323 HTTP/1.1
+content-type: application/json
+
+###
+
+# request for example.mjs
+
+POST http://localhost:8888/travel/guarulhos/brasil HTTP/1.1
 content-type: application/json
 
 {
-    "name": "sample",
-    "time": "Wed, 21 Oct 2015 18:27:50 GMT"
+    "name": "John Doe"
 }
