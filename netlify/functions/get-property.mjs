@@ -1,38 +1,48 @@
-/** @type {import('@netlify/functions').Handler } */
-
 import * as cheerio from "cheerio";
 
+/**
+ * A function that checks if a given string is a valid URL.
+ *
+ * @param {string} urlString - The URL string to be checked.
+ * @return {boolean} Returns true if the string is a valid URL, false otherwise.
+ */
+const isValidUrl = (urlString) => {
+  try {
+    return Boolean(new URL(urlString));
+  } catch (e) {
+    return false;
+  }
+};
+
+/**
+ * Netlify function to get property data.
+ *
+ * @param {Request} req - O objeto de requisição HTTP.
+ * @param {import("@netlify/functions").Context} context - O contexto da função.
+ * @returns {Response} - Uma resposta HTTP.
+ */
 export default async (req, context) => {
-  /* get .env vars in Netlify */
-  // const apiKey = Netlify.env.get("MY_API_KEY");
+  // show request id
+  console.log(`REQUEST ID: ${context.requestId}`);
 
-  /* get params: defined by path -> '/api/property/:url' */
-  // let { url } = context.params;
-
-  /* get query: defined by 'searchParams' -> '?query=...' */
-  //query = new URL(req.url).searchParams.get("query");
-
+  // get url query param
   const urlQueryParam = new URL(req.url).searchParams.get("url");
 
-  let hostname = null;
+  // check if url is valid
+  if (!isValidUrl(urlQueryParam))
+    return new Response(JSON.stringify({ error: "Invalid url information" }), {
+      status: 400,
+    });
 
-  try {
-    hostname = new URL(urlQueryParam)?.hostname;
-  } catch (error) {
-    return new Response(
-      console.log("url error: ", error),
-      JSON.stringify({ error: "Invalid url information" }, { status: 400 })
-    );
-  }
+  //get hostname from url
+  const { hostname } = new URL(urlQueryParam);
 
+  // check hostname is correct
   if (hostname !== "www.rkimoveis.com.br") {
-    return new Response(
-      JSON.stringify({ error: "Invalid hostname" }, { status: 412 })
-    );
+    return new Response(JSON.stringify({ error: "Invalid hostname" }), {
+      status: 412,
+    });
   }
-
-  // console.log("req: ", req.body);
-  console.log("urlQueryParam: ", urlQueryParam);
 
   const url = urlQueryParam;
 
@@ -46,9 +56,9 @@ export default async (req, context) => {
     $(".titulo-principal").text() === "Página não encontrada";
 
   if (pageNotFound)
-    return new Response(
-      JSON.stringify({ error: "Property Not found" }, { status: 404 })
-    );
+    return new Response(JSON.stringify({ error: "Property Not found" }), {
+      status: 404,
+    });
 
   // Extrair o código do imóvel
   const codigoImovel = $("b#cod-principal").text().split(":")[1].trim();
@@ -99,18 +109,24 @@ export default async (req, context) => {
     garage: garagem,
   };
 
-  // console.log("dados: ", data);
-
   // retornar os dados
-  return new Response(JSON.stringify(data));
+  return new Response(JSON.stringify(data), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 };
 
+/**
+ * Configurações para a rota "/api/property/:url".
+ * @type {import("@netlify/functions").Config}
+ */
 export const config = {
   path: ["/api/property", "/api/property/:url"],
   preferStatic: true,
 };
 
 /**
- *  install netlify-cli to run locally
- *  npm install -g netlify-cli
+ *  install netlify-cli to run locally: npm install -g netlify-cli
+ *  run server: netlify dev
  */
