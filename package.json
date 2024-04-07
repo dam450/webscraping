@@ -8,12 +8,17 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev:netlify": "netlify dev",
+    "dev:node": "node --inspect --watch index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cheerio": "1.0.0-rc.12"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.21.2"
   }
 }
