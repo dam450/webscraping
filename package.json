@@ -19,6 +19,7 @@
     "cheerio": "1.0.0-rc.12"
   },
   "devDependencies": {
+    "@netlify/functions": "^2.6.0",
     "netlify-cli": "^17.21.2"
   }
 }
